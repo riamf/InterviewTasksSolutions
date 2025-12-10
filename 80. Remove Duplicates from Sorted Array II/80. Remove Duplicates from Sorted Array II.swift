@@ -1,16 +1,14 @@
 class Solution {
     func removeDuplicates(_ nums: inout [Int]) -> Int {
-        var k = 1
-        var occurrences = 0
+        guard nums.count > 2 else {
+            return nums.count
+        }
+        var k = 2
         
-        for i in 1..<nums.count {
-            if nums[k-1] != nums[i] {
+        for i in 2..<nums.count {
+            if nums[k-2] != nums[i] {
                 nums[k] = nums[i]
                 k += 1
-                occurrences = 0
-            } else if nums[k-1] == nums[i], occurrences < 1 {
-                k += 1
-                occurrences += 1
             }
         }
         
