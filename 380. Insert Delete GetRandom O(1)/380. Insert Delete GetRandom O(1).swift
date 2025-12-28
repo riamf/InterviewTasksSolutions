@@ -3,25 +3,39 @@ import Foundation
 class RandomizedSet {
     
     var dataSet: Array<Int?>
+    var indexMap: [Int: Int]
 
     init() {
-        dataSet = Array<Int?>(repeating: nil, count: NSDecimalNumber(decimal:pow(2,31)*2).intValue)
+        dataSet = Array<Int?>()
+        indexMap = [Int: Int]()
     }
     
     func insert(_ val: Int) -> Bool {
-        let result = dataSet[val] == nil
-        dataSet[val] = val
-        return result
+        if let result = indexMap[val] {
+            return false
+        }
+        
+        dataSet.append(val)
+        indexMap[val] = dataSet.count - 1
+        
+        return true
     }
     
     func remove(_ val: Int) -> Bool {
-        let result = dataSet[val] != nil
-        dataSet[val] = nil
-        return result
+        if let indexVal = indexMap[val] {
+            let lastVal = dataSet.last!!
+            dataSet[indexVal] = lastVal
+            indexMap[lastVal] = indexVal
+            dataSet.removeLast()
+            indexMap.removeValue(forKey: val)
+            return true
+        } else {
+            return false
+        }
     }
     
     func getRandom() -> Int {
-        
+        dataSet.randomElement()!!
     }
 }
 
