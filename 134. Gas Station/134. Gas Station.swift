@@ -7,47 +7,38 @@ class Solution {
         var counter = 0
         var steps = [Int]()
         var currentIndex = 0
-        var posibilitiesMap = [Int: Int]()
         
-        for i in 0..<gas.count {
-            let g = gas[i]
-            var pos = [Int]()
-
-            if i < cost.count-1, g >= cost[i + 1] {
-                posibilitiesMap[i] = i + 1
-            } else if i == cost.count - 1 {
-                if g >= cost[0] {
-                    posibilitiesMap[i] = 0
-                }
-            } else {
-                posibilitiesMap[i] = -1
-            }
-        }
-        
-        for (si, value) in posibilitiesMap where value != -1 {
-            print("Start at index \(si)")
-            var canBeCompleted = false
-            
+        for i in (0..<gas.count) {
+            print("Starting at \(i)")
+            var totalGas = gas[i]
             var counter = 0
-            var tank = gas[si]
-            var ci = si
-            var visitedIndices = Set<Int>()
-            visitedIndices.insert(ci)
-            while counter < 100 || visitedIndices.count == gas.count {
-                let nextCI = ci + 1
-                
-                
-                visitedIndices.insert(ci)
-                if visitedIndices.count == gas.count {
-                    canBeCompleted = true
+            var visited = Set<Int>()
+            var currentIndex = i
+            while counter < 100, visited.count < gas.count {
+                let firstPossibleIndexs = (0..<gas.count).filter { !visited.contains($0) }
+                if !firstPossibleIndexs.isEmpty {
+                    let firstPossibleIndex = firstPossibleIndexs.first(where: { $0 > currentIndex }) ?? firstPossibleIndexs.first!
+                    print("Going to \(firstPossibleIndex) with totalGas \(totalGas)")
+                    let cost = cost[firstPossibleIndex]
+                    if totalGas >= cost {
+                        totalGas -= cost
+                        currentIndex = firstPossibleIndex
+                        visited.insert(firstPossibleIndex)
+                    } else {
+                        // this index is not possible
+                        print("Cannot proceed to \(firstPossibleIndex) with totalGas \(totalGas) cost is \(cost)")
+                        break
+                    }
+                } else {
+                    print("All has been visited")
                     break
                 }
+                
                 counter += 1
             }
             
         }
         
-        print(posibilitiesMap)
         return -1
     }
 }
