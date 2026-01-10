@@ -2,52 +2,25 @@ import UIKit
 
 class Solution {
     func canCompleteCircuit(_ gas: [Int], _ cost: [Int]) -> Int {
-        var totalGas = 0
-        var maxCounter = 100
-        var counter = 0
-        var steps = [Int]()
-        var currentIndex = 0
-        var resultIndex = -1
+        var totalSurplus = 0 // Bilans paliwa na całej trasie
+        var currentTank = 0  // Paliwo w baku od ostatniego resetu startu
+        var startingIndex = 0
         
-        for i in (0..<gas.count) {
-            print("Starting at \(i)")
-            var totalGas = 0
-            var counter = 0
-            var visited = Set<Int>()
-            var foundALoop = false
-            var currentIndex = i
-            while counter < 100, visited.count < gas.count {
-                totalGas += gas[currentIndex]
-                let firstPossibleIndexs = (0..<gas.count).filter { !visited.contains($0) }
-                if !firstPossibleIndexs.isEmpty {
-                    let firstPossibleIndex = firstPossibleIndexs.first(where: { $0 > currentIndex }) ?? firstPossibleIndexs.first!
-                    let cost = cost[currentIndex]
-                    print("Going to \(firstPossibleIndex) with totalGas \(totalGas) cost is \(cost)")
-                    if totalGas >= cost {
-                        totalGas -= cost
-                        currentIndex = firstPossibleIndex
-                        visited.insert(firstPossibleIndex)
-                        foundALoop = visited.count == gas.count
-                    } else {
-                        // this index is not possible
-                        print("Cannot proceed to \(firstPossibleIndex) with totalGas \(totalGas) cost is \(cost)")
-                        break
-                    }
-                } else {
-                    print("All has been visited")
-                    break
-                }
-                
-                counter += 1
-            }
-            if foundALoop {
-                resultIndex = i
-                break
-            }
+        for i in 0..<gas.count {
+            let diff = gas[i] - cost[i]
+            totalSurplus += diff
+            currentTank += diff
             
+            // Jeśli zabrakło paliwa, by dojechać do następnej stacji
+            if currentTank < 0 {
+                // Resetujemy: następna stacja to potencjalny nowy start
+                startingIndex = i + 1
+                currentTank = 0
+            }
         }
         
-        return resultIndex
+        // Jeśli ogólny bilans jest ujemny, nie da się przejechać trasy
+        return totalSurplus >= 0 ? startingIndex : -1
     }
 }
 
