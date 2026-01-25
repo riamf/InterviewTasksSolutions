@@ -3,25 +3,30 @@ import UIKit
 
 class Solution {
     func trap(_ height: [Int]) -> Int {
-        var waterTapped = 0
-        for (i, h) in height.enumerated() {
-            print("\(i): \(h)")
-            var leftMax = h
-            var rightMax = h
-            for j in (0..<i) {
-                if height[j] > leftMax {
-                    leftMax = height[j]
+        guard height.count > 0 else { return 0 }
+        
+        var left = 0
+        var right = height.count - 1
+        var maxL = 0
+        var maxP = 0
+        var totalWater = 0
+        
+        while left < right {
+            if height[left] < height[right] {
+                if height[left] >= maxL {
+                    maxL = height[left]
+                } else {
+                    totalWater += (maxL - height[left])
                 }
+                left += 1
+            } else {
+                maxP = max(maxP, height[right])
+                totalWater += maxP - height[right]
+                right -= 1
             }
-            for j in (i+1..<height.count) {
-                if height[j] > rightMax {
-                    rightMax = height[j]
-                }
-            }
-            
-            waterTapped += min(leftMax, rightMax) - h
         }
-        return waterTapped
+        
+        return totalWater
     }
 }
 
